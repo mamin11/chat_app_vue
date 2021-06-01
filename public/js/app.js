@@ -2117,20 +2117,28 @@ var app = new Vue({
     messages: []
   },
   created: function created() {
+    var _this = this;
+
     this.fetchMessages();
+    Echo["private"]('chat').listen('MessageSent', function (e) {
+      _this.messages.push({
+        message: e.message.message,
+        user: e.user
+      });
+    });
   },
   methods: {
     fetchMessages: function fetchMessages() {
-      var _this = this;
+      var _this2 = this;
 
       axios__WEBPACK_IMPORTED_MODULE_0___default().get('/chat').then(function (response) {
-        _this.messages = response.data;
+        _this2.messages = response.data;
       });
     },
     addMessage: function addMessage(message) {
       this.messages.push(message);
       axios__WEBPACK_IMPORTED_MODULE_0___default().post('/chat', message).then(function (response) {
-        console.log(respose.data);
+        console.log(response.data);
       });
     }
   }

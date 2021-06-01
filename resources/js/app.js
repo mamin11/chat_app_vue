@@ -46,6 +46,13 @@ const app = new Vue({
 
     created() {
         this.fetchMessages()
+        Echo.private('chat')
+        .listen('MessageSent', (e) => {
+            this.messages.push({
+            message: e.message.message,
+            user: e.user
+            });
+        });
     },
 
     methods: {
@@ -58,7 +65,7 @@ const app = new Vue({
             this.messages.push(message)
 
             axios.post('/chat', message).then(response => {
-                console.log(respose.data)
+                console.log(response.data)
             })
         }
     }
