@@ -16,10 +16,12 @@ window.Vue = require('vue').default;
  * Eg. ./components/ExampleComponent.vue -> <example-component></example-component>
  */
 
-// const files = require.context('./', true, /\.vue$/i)
-// files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
+const files = require.context('./', true, /\.vue$/i)
+files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
 Vue.component('example-component', require('./components/ExampleComponent.vue').default);
+import axios from 'axios';
+// Vue.component('chat-messages', require('./components/ChatMessages.vue'));
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -37,4 +39,27 @@ Vue.use(Vuetify);
 const app = new Vue({
     el: '#app',
     vuetify: new Vuetify(),
+
+    data: {
+        messages: []
+    },
+
+    created() {
+        this.fetchMessages()
+    },
+
+    methods: {
+        fetchMessages() {
+            axios.get('/chat').then(response => {
+                this.messages = response.data
+            })
+        },
+        addMessage(message) {
+            this.messages.push(message)
+
+            axios.post('/chat', message).then(response => {
+                console.log(respose.data)
+            })
+        }
+    }
 });
